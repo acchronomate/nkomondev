@@ -19,9 +19,10 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->json('description'); // {fr: "", en: ""}
             $table->string('address');
-            $table->string('city');
+            $table->foreignId('country_id')->constrained();
+            $table->foreignId('city_id')->constrained();
+            $table->foreignId('district_id')->nullable()->constrained();
             $table->string('state')->nullable();
-            $table->string('country');
             $table->decimal('latitude', 10, 8)->nullable();
             $table->decimal('longitude', 11, 8)->nullable();
             $table->string('phone')->nullable();
@@ -39,7 +40,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['user_id', 'status']);
-            $table->index(['city', 'status']);
+            $table->index(['city_id', 'status']);
             $table->index('slug');
             $table->index('type');
         });

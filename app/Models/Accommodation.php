@@ -19,9 +19,10 @@ class Accommodation extends Model
         'slug',
         'description',
         'address',
-        'city',
+        'country_id',
+        'city_id',
+        'district_id',
         'state',
-        'country',
         'latitude',
         'longitude',
         'phone',
@@ -93,6 +94,30 @@ class Accommodation extends Model
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
+    }
+
+    /**
+     * Get the country of the accommodation.
+     */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
+    }
+
+    /**
+     * Get the city of the accommodation.
+     */
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    /**
+     * Get the district of the accommodation.
+     */
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
     }
 
     /**
@@ -194,9 +219,9 @@ class Accommodation extends Model
     /**
      * Scope to filter by city.
      */
-    public function scopeInCity($query, string $city)
+    public function scopeInCity($query, $cityId)
     {
-        return $query->where('city', 'like', "%{$city}%");
+        return $query->where('city_id', $cityId);
     }
 
     /**
@@ -208,6 +233,21 @@ class Accommodation extends Model
     }
 
     /**
+     * Get the full address of the accommodation.
+     */
+    public function getFullAddressAttribute(): string
+    {
+        $parts = array_filter([
+            $this->address,
+            $this->district?->getName(),
+            $this->cityRelation?->getName() ?? $this->city,
+            $this->countryRelation?->getName() ?? $this->country,
+        ]);
+
+        return implode(', ', $parts);
+    }
+
+    /**
      * Scope to filter by amenities.
      */
     public function scopeWithAmenities($query, array $amenities)
@@ -216,5 +256,21 @@ class Accommodation extends Model
             $query->whereJsonContains('amenities', $amenity);
         }
         return $query;
+    }
+
+    /**
+     * Scope to filter by location.
+     */
+    public function scopeInLocation($query, $countryId = null, $cityId = null, $districtId = null)
+    {
+        return $query->when($countryId, function ($q) use ($countryId) {
+            $q->where('country_id', $countryId);
+        })
+            ->when($cityId, function ($q) use ($cityId) {
+                $q->where('city_id', $cityId);
+            })
+            ->when($districtId, function ($q) use ($districtId) {
+                $q->where('district_id', $districtId);
+            });
     }
 }
