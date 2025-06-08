@@ -22,11 +22,13 @@ return new class extends Migration
             $table->string('last_name')->nullable();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
-            $table->string('city')->nullable();
-            $table->string('country')->nullable();
+            $table->foreignId('city_id')->nullable()->constrained('cities');
+            $table->foreignId('country_id')->nullable()->constrained('countries');
             $table->string('locale', 5)->default('fr'); // fr, en
             $table->foreignId('preferred_currency_id')->nullable()->constrained('currencies');
             $table->boolean('is_active')->default(true);
+            $table->timestamp('last_login_at')->nullable();
+            $table->string('last_login_ip', 45)->nullable(); // IPv6 compatible
             $table->rememberToken();
             $table->timestamps();
 

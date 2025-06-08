@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -32,11 +35,13 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'last_name',
         'phone',
         'address',
-        'city',
-        'country',
+        'city_id',
+        'country_id',
         'locale',
         'preferred_currency_id',
         'is_active',
+        'last_login_at',
+        'last_login_ip',
     ];
     protected $hidden = [
         'password',
@@ -49,9 +54,24 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'is_active' => 'boolean',
     ];
 
+    /**
+     * @throws Exception
+     */
     public function canAccessPanel(Panel $panel): bool
     {
-        return str_ends_with($this->email, '@nkomonapp.com') && $this->hasVerifiedEmail();
+        if ($panel->getId() === 'admin') {
+            return str_ends_with($this->email, '@'.config('app.domain')) && $this->hasVerifiedEmail() && $this->isAdmin() && $this->is_active;
+        }
+
+        if ($panel->getId() === 'host') {
+            return $this->hasVerifiedEmail() && $this->isHost() && $this->is_active;
+        }
+
+        if ($panel->getId() === 'client') {
+            return $this->hasVerifiedEmail() && $this->isClient() && $this->is_active;
+        }
+
+        return false;
     }
 
     /**
@@ -71,6 +91,22 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function preferredCurrency(): BelongsTo
     {
         return $this->belongsTo(Currency::class, 'preferred_currency_id');
+    }
+
+    /**
+     * Get the user's city.
+     */
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    /**
+     * Get the user's country.
+     */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
     }
 
     /**

@@ -62,6 +62,14 @@ class City extends Model
     }
 
     /**
+     * Get the users associated with the city.
+     */
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
+
+    /**
      * Get the country that owns the city.
      */
     public function country(): BelongsTo

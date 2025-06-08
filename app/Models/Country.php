@@ -33,6 +33,22 @@ class Country extends Model
     }
 
     /**
+     * Get the currency associated with the country.
+     */
+    public function currency(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Currency::class, 'currency_code', 'code');
+    }
+
+    /**
+     * Get the users associated with the country.
+     */
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
+
+    /**
      * Get the cities for the country.
      */
     public function cities(): HasMany
