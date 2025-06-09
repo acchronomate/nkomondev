@@ -2,7 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Admin\Resources\AccommodationResource;
 use App\Filament\Admin\Resources\AdminResource;
+use App\Filament\Admin\Resources\AvailabilityResource;
 use App\Filament\Admin\Resources\CityResource;
 use App\Filament\Admin\Resources\ClientResource;
 use App\Filament\Admin\Resources\CountryResource;
@@ -10,7 +12,9 @@ use App\Filament\Admin\Resources\CurrencyResource;
 use App\Filament\Admin\Resources\DistrictResource;
 use App\Filament\Admin\Resources\HostResource;
 use App\Filament\Admin\Resources\PartnerResource;
+use App\Filament\Admin\Resources\RoomResource;
 use App\Filament\Admin\Resources\SettingResource;
+use App\Filament\Admin\Resources\BookingResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -31,6 +35,7 @@ use App\Http\Middleware\AdminMiddleware;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
+use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -42,7 +47,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Teal,
                 'danger' => Color::Rose,
                 'gray' => Color::Gray,
                 'info' => Color::Blue,
@@ -104,19 +109,30 @@ class AdminPanelProvider extends PanelProvider
                                 ...DistrictResource::getNavigationItems(),
                             ]),
                         NavigationGroup::make('Gestion des hébergements')
-                            ->icon('heroicon-o-building-office'),
+                            ->icon('heroicon-o-building-office')
+                            ->items([
+                                ...AccommodationResource::getNavigationItems(),
+                                ...RoomResource::getNavigationItems(),
+                            ]),
                         NavigationGroup::make('Gestion des réservations')
-                            ->icon('heroicon-o-calendar-days'),
+                            ->icon('heroicon-o-calendar-days')
+                            ->items([
+                                ...BookingResource::getNavigationItems(),
+                                ...AvailabilityResource::getNavigationItems()
+                            ]),
                         NavigationGroup::make('Gestion financière')
                             ->icon('heroicon-o-banknotes'),
                         NavigationGroup::make('Configuration')
                             ->icon('heroicon-o-cog-6-tooth')
-                        ->items([
+                            ->items([
                                 ...CurrencyResource::getNavigationItems(),
                                 ...SettingResource::getNavigationItems(),
                             ]),
                     ]);
             })
+            ->plugins([
+                FilamentBackgroundsPlugin::make(),
+            ])
             ->sidebarCollapsibleOnDesktop()
             ->maxContentWidth('full');
     }
