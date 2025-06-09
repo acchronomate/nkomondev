@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\DistrictResource\Pages;
 
 use App\Filament\Admin\Resources\DistrictResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
@@ -50,6 +51,10 @@ class ListDistricts extends ListRecords
     protected function importDistricts(): void
     {
         // Logique d'import à implémenter
-        $this->notify('success', 'Import en cours...');
+        Notification::make()
+            ->title('Import en cours...')
+            ->body('L\'importation des districts est en cours...')
+            ->success()
+            ->send();
     }
 }

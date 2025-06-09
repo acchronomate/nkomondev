@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\SettingResource\Pages;
 
 use App\Filament\Admin\Resources\SettingResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use App\Models\Setting;
 use Filament\Resources\Components\Tab;
@@ -25,7 +26,11 @@ class ListSettings extends ListRecords
                 ->action(function () {
                     Setting::initializeDefaults();
 
-                    $this->notify('success', 'Les paramètres par défaut ont été initialisés.');
+                    Notification::make()
+                        ->title('Paramètres par défaut initialisés')
+                        ->body('Les paramètres par défaut ont été réinitialisés avec succès.')
+                        ->success()
+                        ->send();
                 })
                 ->requiresConfirmation()
                 ->visible(fn () => Setting::count() === 0),

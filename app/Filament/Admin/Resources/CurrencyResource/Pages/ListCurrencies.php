@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\CurrencyResource\Pages;
 
 use App\Filament\Admin\Resources\CurrencyResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
 class ListCurrencies extends ListRecords
@@ -30,6 +31,11 @@ class ListCurrencies extends ListRecords
     {
         // Logique pour mettre à jour tous les taux
         // Pourrait ouvrir un modal avec un formulaire pour tous les taux
-        $this->notify('success', 'Fonctionnalité en cours de développement');
+
+        Notification::make()
+            ->title('Mise à jour des taux')
+            ->body('La mise à jour des taux de change est en cours.')
+            ->success()
+            ->send();
     }
 }

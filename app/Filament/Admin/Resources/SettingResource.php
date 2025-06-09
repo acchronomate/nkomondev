@@ -21,7 +21,7 @@ class SettingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationGroup = 'Configuration';
+    protected static ?string $navigationGroup = 'Configuration système';
 
     protected static ?int $navigationSort = 2;
 
@@ -123,7 +123,7 @@ class SettingResource extends Resource
                     ->formatStateUsing(function ($state, $record) {
                         return match($record->type) {
                             'boolean' => $state === '1' ? 'Oui' : 'Non',
-                            'json' => json_encode(json_decode($state, false, 512, JSON_THROW_ON_ERROR), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+                            'json' => 'JSON',
                             default => Str::limit($state, 50),
                         };
                     })
@@ -134,8 +134,7 @@ class SettingResource extends Resource
                         default => 'gray',
                     }),
 
-                Tables\Columns\TextColumn::make('type')
-                    ->badge()
+                Tables\Columns\BadgeColumn::make('type')
                     ->label('Type')
                     ->colors([
                         'primary' => 'string',
