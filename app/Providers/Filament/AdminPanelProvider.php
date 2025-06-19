@@ -11,6 +11,7 @@ use App\Filament\Admin\Resources\CountryResource;
 use App\Filament\Admin\Resources\CurrencyResource;
 use App\Filament\Admin\Resources\DistrictResource;
 use App\Filament\Admin\Resources\HostResource;
+use App\Filament\Admin\Resources\InvoiceResource;
 use App\Filament\Admin\Resources\PartnerResource;
 use App\Filament\Admin\Resources\RoomResource;
 use App\Filament\Admin\Resources\SettingResource;
@@ -121,7 +122,10 @@ class AdminPanelProvider extends PanelProvider
                                 ...AvailabilityResource::getNavigationItems()
                             ]),
                         NavigationGroup::make('Gestion financière')
-                            ->icon('heroicon-o-banknotes'),
+                            ->icon('heroicon-o-banknotes')
+                            ->items([
+                                ...InvoiceResource::getNavigationItems(),
+                            ]),
                         NavigationGroup::make('Configuration')
                             ->icon('heroicon-o-cog-6-tooth')
                             ->items([
