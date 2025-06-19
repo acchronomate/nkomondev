@@ -6,5 +6,6 @@ return [
     App\Providers\Filament\AdminPanelProvider::class,
     App\Providers\Filament\ClientPanelProvider::class,
     App\Providers\Filament\HostPanelProvider::class,
+    App\Providers\NotificationServiceProvider::class,
     App\Providers\SettingProvider::class,
 ];

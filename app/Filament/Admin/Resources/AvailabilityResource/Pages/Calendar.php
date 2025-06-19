@@ -3,14 +3,13 @@
 namespace App\Filament\Admin\Resources\AvailabilityResource\Pages;
 
 use App\Filament\Admin\Resources\AvailabilityResource;
-use Filament\Actions;
-use Filament\Resources\Pages\ViewRecord;
+use Filament\Resources\Pages\Page;
 
-class CalendarView extends ViewRecord
+class Calendar extends Page
 {
     protected static string $resource = AvailabilityResource::class;
 
-    protected static string $view = 'filament.resources.availability-resource.pages.calendar-view';
+    protected static string $view = 'filament.admin.resources.availability-resource.pages.calendar';
 
     protected static ?string $title = 'Vue calendrier';
 

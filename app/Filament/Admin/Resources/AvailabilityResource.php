@@ -3,20 +3,18 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\AvailabilityResource\Pages;
-use App\Filament\Admin\Resources\AvailabilityResource\RelationManagers;
 use App\Models\Availability;
+use App\Models\Room;
+use App\Models\Accommodation;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Room;
-use App\Models\Accommodation;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 
 class AvailabilityResource extends Resource
@@ -37,11 +35,11 @@ class AvailabilityResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Chambre et période')
+                Section::make('Chambre')
                     ->schema([
                         Forms\Components\Select::make('accommodation_id')
                             ->label('Hébergement')
-                            ->options(fn() => Accommodation::active()->pluck('name', 'id'))
+                            ->options(fn () => Accommodation::active()->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
                             ->required()
@@ -65,14 +63,41 @@ class AvailabilityResource extends Resource
                             ->searchable()
                             ->required()
                             ->reactive(),
+                    ])
+                    ->columns(3),
+
+                Section::make('Date')
+                    ->schema([
+                        Forms\Components\ToggleButtons::make('date_type')
+                            ->label('Type de disponibilité')
+                            ->options([
+                                'single' => 'Date unique',
+                                'range' => 'Période',
+                            ])
+                            ->default('single')
+                            ->inline()
+                            ->reactive(),
 
                         Forms\Components\DatePicker::make('date')
                             ->label('Date')
-                            ->required()
-                            ->minDate(now())
-                            ->unique(ignoreRecord: true, modifyRuleUsing: function ($rule, Get $get) {
-                                return $rule->where('room_id', $get('room_id'));
-                            }),
+                            ->native(false)
+                            ->required(fn (Get $get) => $get('date_type') === 'single')
+                            ->visible(fn (Get $get) => $get('date_type') === 'single')
+                            ->minDate(now()),
+
+                        Forms\Components\DatePicker::make('date_from')
+                            ->label('Du')
+                            ->native(false)
+                            ->required(fn (Get $get) => $get('date_type') === 'range')
+                            ->visible(fn (Get $get) => $get('date_type') === 'range')
+                            ->minDate(now()),
+
+                        Forms\Components\DatePicker::make('date_to')
+                            ->label('Au')
+                            ->native(false)
+                            ->required(fn (Get $get) => $get('date_type') === 'range')
+                            ->visible(fn (Get $get) => $get('date_type') === 'range')
+                            ->minDate(now()),
                     ])
                     ->columns(3),
 
@@ -290,21 +315,26 @@ class AvailabilityResource extends Resource
             ->defaultSort('date', 'asc');
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListAvailabilities::route('/'),
             'create' => Pages\CreateAvailability::route('/create'),
-            'view' => Pages\ViewAvailability::route('/{record}'),
             'edit' => Pages\EditAvailability::route('/{record}/edit'),
-            'calendar-view' => Pages\CalendarView::route('/calendar'),
+            'calendar' => Pages\Calendar::route('/calendar'),
         ];
     }
 
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->with(['room.accommodation.currency'])
-            ->join('rooms', 'availabilities.room_id', '=', 'rooms.id');
+            ->with(['room.accommodation.currency']);
     }
 }

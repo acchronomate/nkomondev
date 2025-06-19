@@ -75,6 +75,22 @@ class Amenity extends Model
     }
 
     /**
+     * Get accommodation amenities for forms.
+     */
+    public static function getAccommodationOptions(): array
+    {
+        return self::getOptions('accommodation');
+    }
+
+    /**
+     * Get room amenities for forms.
+     */
+    public static function getRoomOptions(): array
+    {
+        return self::getOptions('room');
+    }
+
+    /**
      * Scope to get only active amenities.
      */
     public function scopeActive($query)

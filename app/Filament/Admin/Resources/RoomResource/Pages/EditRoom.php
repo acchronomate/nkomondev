@@ -17,7 +17,7 @@ class EditRoom extends EditRecord
             Actions\Action::make('manage_availability')
                 ->label('Gérer les disponibilités')
                 ->icon('heroicon-o-calendar-days')
-                ->url(fn () => route('filament.admin.resources.availabilities.index', ['room' => $this->record->id]))
+                ->url(fn () => \App\Filament\Admin\Resources\AvailabilityResource::getUrl('index', ['room' => $this->record->id]))
                 ->color('warning'),
 
             Actions\DeleteAction::make()

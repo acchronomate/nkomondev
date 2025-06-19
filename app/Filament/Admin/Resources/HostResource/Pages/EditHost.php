@@ -17,13 +17,13 @@ class EditHost extends EditRecord
             Actions\Action::make('view_accommodations')
                 ->label('Voir les hébergements')
                 ->icon('heroicon-o-building-office')
-                ->url(fn () => route('filament.admin.resources.accommodations.index', ['host' => $this->record->id]))
+                ->url(fn () => \App\Filament\Admin\Resources\AccommodationResource::getUrl('index', ['host' => $this->record->id]))
                 ->visible(fn () => $this->record->accommodations()->count() > 0),
 
             Actions\Action::make('view_invoices')
                 ->label('Voir les factures')
                 ->icon('heroicon-o-document-text')
-                ->url(fn () => route('filament.admin.resources.invoices.index', ['user' => $this->record->id]))
+                ->url(fn () => \App\Filament\Admin\Resources\InvoiceResource::getUrl('index', ['user' => $this->record->id]))
                 ->visible(fn () => $this->record->invoices()->count() > 0),
 
             Actions\DeleteAction::make()

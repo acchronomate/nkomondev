@@ -200,6 +200,7 @@ class CityResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()->button()->color('danger')->label(trans('Remove')),
                 Tables\Actions\Action::make('view_districts')
                     ->label('Voir quartiers')
                     ->icon('heroicon-o-map')

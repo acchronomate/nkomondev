@@ -17,13 +17,13 @@ class EditClient extends EditRecord
             Actions\Action::make('view_bookings')
                 ->label('Voir les réservations')
                 ->icon('heroicon-o-calendar-days')
-                ->url(fn () => route('filament.admin.resources.bookings.index', ['client' => $this->record->id]))
+                ->url(fn () => \App\Filament\Admin\Resources\BookingResource::getUrl('index', ['client' => $this->record->id]))
                 ->visible(fn () => $this->record->bookings()->count() > 0),
 
             Actions\Action::make('view_reviews')
                 ->label('Voir les avis')
                 ->icon('heroicon-o-star')
-                ->url(fn () => route('filament.admin.resources.reviews.index', ['user' => $this->record->id]))
+                ->url(fn () => \App\Filament\Admin\Resources\ReviewResource::getUrl('index', ['user' => $this->record->id]))
                 ->visible(fn () => $this->record->reviews()->count() > 0),
 
             Actions\DeleteAction::make()

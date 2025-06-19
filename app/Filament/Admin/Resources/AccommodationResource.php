@@ -3,24 +3,22 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\AccommodationResource\Pages;
-use App\Filament\Admin\Resources\AccommodationResource\RelationManagers;
 use App\Models\Accommodation;
+use App\Models\Country;
+use App\Models\City;
+use App\Models\District;
+use App\Models\Amenity;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Country;
-use App\Models\City;
-use App\Models\District;
-use App\Models\Amenity;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
 
 class AccommodationResource extends Resource
 {
@@ -38,6 +36,12 @@ class AccommodationResource extends Resource
 
     public static function form(Form $form): Form
     {
+        // Si on est en mode création, le wizard gère le formulaire
+        if ($form->getOperation() === 'create') {
+            return $form->schema([]);
+        }
+
+        // Pour l'édition, on garde le formulaire avec tabs
         return $form
             ->schema([
                 Tabs::make('Hébergement')
@@ -122,10 +126,7 @@ class AccommodationResource extends Resource
                                     ->schema([
                                         Forms\Components\Select::make('country_id')
                                             ->label('Pays')
-                                            ->options(fn() => Country::active()
-                                                ->ordered()
-                                                ->get()
-                                                ->mapWithKeys(fn ($country) => [$country->id => $country->getName()]))
+                                            ->options(fn () => Country::active()->ordered()->get()->pluck('name', 'id'))
                                             ->searchable()
                                             ->required()
                                             ->reactive()
@@ -329,8 +330,7 @@ class AccommodationResource extends Resource
                         default => 'gray',
                     }),
 
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
+                Tables\Columns\BadgeColumn::make('status')
                     ->label('Statut')
                     ->colors([
                         'success' => 'active',
@@ -409,7 +409,6 @@ class AccommodationResource extends Resource
         return [
             'index' => Pages\ListAccommodations::route('/'),
             'create' => Pages\CreateAccommodation::route('/create'),
-            'view' => Pages\ViewAccommodation::route('/{record}'),
             'edit' => Pages\EditAccommodation::route('/{record}/edit'),
         ];
     }

@@ -17,12 +17,12 @@ class EditAccommodation extends EditRecord
             Actions\Action::make('view_rooms')
                 ->label('Gérer les chambres')
                 ->icon('heroicon-o-home')
-                ->url(fn () => route('filament.admin.resources.rooms.index', ['accommodation' => $this->record->id])),
+                ->url(fn () => \App\Filament\Admin\Resources\RoomResource::getUrl('index', ['accommodation' => $this->record->id])),
 
             Actions\Action::make('view_on_site')
                 ->label('Voir sur le site')
                 ->icon('heroicon-o-eye')
-                ->url(fn () => route('accommodation.show', $this->record->slug))
+                ->url(fn () => url('/accommodation/' . $this->record->slug))
                 ->openUrlInNewTab()
                 ->visible(fn () => $this->record->status === 'active'),
 
